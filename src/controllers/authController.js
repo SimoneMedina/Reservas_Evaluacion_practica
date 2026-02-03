@@ -8,7 +8,9 @@ const ERROR_INVALID_CREDENTIALS = 'Credenciales inválidas';
 const ERROR_INTERNAL = 'Error interno del servidor';
 const JWT_EXPIRES_IN = '1h';
 
-// Registro de nuevo usuario
+/**
+ * Registro de nuevo usuario
+ */
 exports.register = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -21,17 +23,25 @@ exports.register = async (req, res) => {
 
         // Cifra la contraseña
         const hash = await bcrypt.hash(password, 10);
-        const user = new User({ email, password: hash });
+
+        // Crea el usuario
+        const user = new User({
+            email,
+            password: hash
+        });
+
         await user.save();
 
-        res.status(201).json({ msg: 'Usuario creado' });
-    } catch (err) {
-        console.error(err);
+        res.status(201).json({ message: 'Usuario creado correctamente' });
+    } catch (error) {
+        console.error(error);
         res.status(500).json({ error: ERROR_INTERNAL });
     }
 };
 
-// Inicio de sesión
+/**
+ * Inicio de sesión
+ */
 exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -48,7 +58,7 @@ exports.login = async (req, res) => {
             return res.status(400).json({ error: ERROR_INVALID_CREDENTIALS });
         }
 
-        // Genera token
+        // Genera token JWT
         const token = jwt.sign(
             { id: user._id },
             process.env.JWT_SECRET,
@@ -56,8 +66,8 @@ exports.login = async (req, res) => {
         );
 
         res.json({ token });
-    } catch (err) {
-        console.error(err);
+    } catch (error) {
+        console.error(error);
         res.status(500).json({ error: ERROR_INTERNAL });
     }
 };

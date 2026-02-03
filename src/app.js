@@ -15,9 +15,14 @@ app.use(express.json());
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('Conectado a MongoDB'))
   .catch(err => console.error('Error al conectar MongoDB', err));
+// Ruta de prueba
+app.get('/', (req, res) => {
+    res.send('Servidor funcionando correctamente');
+});
 
 // Rutas para autenticación y reservas/turnos
 app.use('/api/auth', require('./routes/auth'));
+
 app.use('/api/reservas', require('./routes/reserva'));
 
 // Exporta la app configurada
